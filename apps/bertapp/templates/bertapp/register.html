@@ -1,0 +1,31 @@
+{% extends 'bertapp/base.html' %}
+{% block title %}登録{% endblock %}
+{% block content %}
+
+<h1>登録画面</h1>
+<form action="{{ url_for('bertapp.register') }}"
+        method="POST"
+        novalidate="novalidate"
+>
+    {{ form.hidden_tag() }}
+    <div id="item-fields">
+        {% for subfield in form.items %}
+            <div>
+                {{ subfield.item }}<button type="button" onclick="this.parentElement.remove()">削除</button>
+            </div>
+        {% endfor %}
+    </div>
+    <button type="button" onclick="addItemField()">項目を追加</button><br>
+    <input type="submit" value="登録">
+</form>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    function addItemField() {
+        var itemFields = document.getElementById('item-fields');
+        var newItem = document.createElement('div');
+        newItem.innerHTML = '<input type="text" name="items-' + itemFields.children.length + '-item" required>' +
+                            '<button type="button" onclick="this.parentElement.remove()">削除</button>';
+        itemFields.appendChild(newItem);
+    }
+</script>
+{% endblock %}

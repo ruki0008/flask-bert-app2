@@ -1,5 +1,9 @@
-from flask import Flask, render_template, request, jsonify, Blueprint
+from flask import Flask, render_template, request, jsonify, Blueprint, redirect, url_for
 from flask_cors import CORS
+from flask_wtf import FlaskForm
+from wtforms import FieldList, FormField, StringField, SubmitField
+from wtforms.validators import DataRequired
+from flask_wtf.csrf import CSRFProtect
 from sentence_transformers import SentenceTransformer, SentencesDataset, InputExample, losses, models, util
 import pandas as pd
 from torch.utils.data import DataLoader
@@ -25,6 +29,13 @@ answers = ['35歳です。', 'ハンバーガーです。',
 corpus_embeddings = model.encode(answers, convert_to_tensor=True)
 
 messages = []
+
+class ItemForm(FlaskForm):
+    item = StringField('Item', validators=[DataRequired()])
+
+class RegisterForm(FlaskForm):
+    items = FieldList(FormField(ItemForm), min_entries=1, max_entries=20)
+    submit = SubmitField('登録')
 
 @bertapp.route('/')
 def index():
@@ -64,3 +75,12 @@ def memory_usage():
         'vms': vms_mb,
         'percent': process.memory_percent()
     })
+
+@bertapp.route('/register', methods=['GET', 'POST'])
+def register():
+    data_list = []
+    form = RegisterForm()
+    if form.validate_on_submit():
+        data_list = [item_form.item.data for item_form in form.items]
+        return redirect(url_for('bertapp.index'))
+    return render_template('bertapp/register.html', form=form, data_list=data_list)

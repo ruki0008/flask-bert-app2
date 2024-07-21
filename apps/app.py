@@ -4,12 +4,18 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
+from apps.config import config
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 csrf = CSRFProtect()
+login_manager = LoginManager()
+login_manager.login_view = 'auth.signup'
+login_manager.login_message = ''
 
-def create_app():
+def create_app(config_key):
     app = Flask(__name__)
+    app.config.from_object(config[config_key])
     CORS(app)
     app.config.from_mapping(
         SECRET_KEY='dev',
@@ -22,11 +28,15 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
     csrf.init_app(app)
+    login_manager.init_app(app)
 
     from apps.bertapp import views as bert_views
     app.register_blueprint(bert_views.bertapp, url_prefix='/bertapp')
 
     from apps.crud import views as crud_views
     app.register_blueprint(crud_views.crud, url_prefix='/crud')
+
+    from apps.auth import views as auth_views
+    app.register_blueprint(auth_views.auth, url_prefix='/auth')
 
     return app
