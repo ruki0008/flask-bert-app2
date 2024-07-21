@@ -8,6 +8,20 @@
         novalidate="novalidate"
 >
     {{ form.hidden_tag() }}
+    {% for message in get_flashed_messages() %}
+    <p style="color: red;">{{ message }}</p>
+    {% endfor %}
+    {{ form.csrf_token }}
+    <p>{{ form.theme.label }} {{ form.theme(placeholder='お題') }}</p>
+    {% for error in form.theme.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>{{ form.answer.label }} {{ form.answer(placeholder='お題の答え') }}</p>
+    {% for error in form.answer.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>質問の回答</p>
+    <p style="color: red;">質問の回答は50文字以内で空欄を無くして登録ボタンを押してください。</p>
     <div id="item-fields">
         {% for subfield in form.items %}
             <div>

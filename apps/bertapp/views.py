@@ -1,15 +1,22 @@
 from flask import Flask, render_template, request, jsonify, Blueprint, redirect, url_for
 from flask_cors import CORS
 from flask_wtf import FlaskForm
+from flask_wtf.csrf import CSRFProtect
+from flask_login import current_user, login_required
+from apps.app import db
+from apps.crud.models import User
+from apps.bertapp.models import UserAnswer
+from apps.bertapp.forms import ItemForm, RegisterForm
 from wtforms import FieldList, FormField, StringField, SubmitField
 from wtforms.validators import DataRequired
-from flask_wtf.csrf import CSRFProtect
 from sentence_transformers import SentenceTransformer, SentencesDataset, InputExample, losses, models, util
 import pandas as pd
 from torch.utils.data import DataLoader
 import torch
 import psutil
 import os
+import random
+import string
 
 bertapp = Blueprint(
     'bertapp',
@@ -30,16 +37,11 @@ corpus_embeddings = model.encode(answers, convert_to_tensor=True)
 
 messages = []
 
-class ItemForm(FlaskForm):
-    item = StringField('Item', validators=[DataRequired()])
-
-class RegisterForm(FlaskForm):
-    items = FieldList(FormField(ItemForm), min_entries=1, max_entries=20)
-    submit = SubmitField('登録')
-
 @bertapp.route('/')
+@login_required
 def index():
-    return render_template('bertapp/index.html')
+    user_answers = UserAnswer.query.filter_by(user_id=current_user.id)
+    return render_template('bertapp/index.html', user_answers=user_answers)
 
 @bertapp.route('/send_message', methods=['POST'])
 def send_message():
@@ -77,10 +79,29 @@ def memory_usage():
     })
 
 @bertapp.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
     data_list = []
     form = RegisterForm()
     if form.validate_on_submit():
+        theme = form.theme.data
+        answer = form.answer.data
         data_list = [item_form.item.data for item_form in form.items]
+        data_text = ','.join(data_list)
+        answer_id = generate_random_string()
+        while True:
+            if not UserAnswer.query.filter_by(answer_id=answer_id).first():
+                break
+            answer_id = generate_random_string
+
+        user_answer = UserAnswer(user_id=current_user.id, theme=theme, q_answers=data_text, answer=answer, answer_id=answer_id)
+        db.session.add(user_answer)
+        db.session.commit()
+
         return redirect(url_for('bertapp.index'))
     return render_template('bertapp/register.html', form=form, data_list=data_list)
+
+def generate_random_string(length=15):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string
