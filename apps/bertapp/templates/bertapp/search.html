@@ -1,0 +1,21 @@
+{% extends 'bertapp/base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+<form action="{{ url_for('bertapp.search') }}"
+        method="POST"
+        novalidate="novalidate"
+>
+    {{ form.hidden_tag() }}
+    {% for message in get_flashed_messages() %}
+    <p style="color: red;">{{ message }}</p>
+    {% endfor %}
+    {{ form.csrf_token }}
+    <p>
+        {{ form.answer_id.label }} {{ form.answer_id(placeholder='お題ID')}}
+    </p>
+    {% for error in form.answer_id.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <input type="submit" value="登録">
+</form>
+{% endblock %}

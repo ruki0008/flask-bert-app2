@@ -6,17 +6,21 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from apps.config import config
 from flask_login import LoginManager
+from flask_socketio import SocketIO
 
 db = SQLAlchemy()
 csrf = CSRFProtect()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.signup'
 login_manager.login_message = ''
+gv_socketio = SocketIO(logger=True, engineio_logger=True)
 
 def create_app(config_key):
     app = Flask(__name__)
     app.config.from_object(config[config_key])
+    gv_socketio.init_app(app)
     CORS(app)
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI=f'sqlite:///{Path(__file__).parent.parent / "local.sqlite"}',

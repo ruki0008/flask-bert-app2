@@ -1,20 +1,8 @@
 {% extends 'bertapp/base.html' %}
 {% block title %}{% endblock %}
 {% block content %}
-<table>
-    <tr>
-        <td>お題</td>
-        <td>質問の回答</td>
-        <td>お題の答え</td>
-        <td>ID</td>
-    </tr>
-    {% for user_answer in user_answers %}
-    <tr>
-        <td>{{ user_answer.theme }}</td>
-        <td>{{ user_answer.q_answers }}</td>
-        <td>{{ user_answer.answer }}</td>
-        <td>{{ user_answer.answer_id }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<h1>逆ネーター</h1>
+<a href="{{ url_for('bertapp.register')}}">お題作成</a>
+<a href="{{ url_for('bertapp.questions')}}">お題一覧</a>
+<a href="{{ url_for('bertapp.search') }}">お題検索</a>
 {% endblock %}

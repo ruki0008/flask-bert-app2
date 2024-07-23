@@ -1,0 +1,20 @@
+{% extends 'bertapp/base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+<table>
+    <tr>
+        <td>お題</td>
+        <td>質問の回答</td>
+        <td>お題の答え</td>
+        <td>お題のID</td>
+    </tr>
+    {% for user_answer in user_answers %}
+    <tr>
+        <td>{{ user_answer.theme }}</td>
+        <td>{{ user_answer.q_answers }}</td>
+        <td>{{ user_answer.answer }}</td>
+        <td>{{ user_answer.answer_id }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
