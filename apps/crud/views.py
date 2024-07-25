@@ -1,8 +1,10 @@
 from apps.crud.forms import UserForm
 from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from apps.app import db
 from apps.crud.models import User
+import string
+import random
 
 crud = Blueprint(
     'crud',
@@ -11,35 +13,11 @@ crud = Blueprint(
     static_folder='static'
 )
 
-@crud.route('/')
-@login_required
-def index():
-    return render_template('crud/index.html')
-
-@crud.route('/sql')
-@login_required
-def sql():
-    db.session.query(User).all()
-    return 'コンソールログを確認してください'
-
-@crud.route('/users/new', methods=['GET', 'POST'])
-@login_required
-def create_user():
-    form = UserForm()
-    if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            password=form.password.data
-        )
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('crud.users'))
-    return render_template('crud/create.html', form=form)
-
 @crud.route('/users')
 @login_required
 def users():
+    if current_user.is_admin == False:
+        return render_template('bertapp/index.html')
     users = User.query.all()
     return render_template('crud/index.html', users=users)
 
@@ -66,3 +44,8 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for('crud.users'))
+
+def generate_random_string(length=20):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string

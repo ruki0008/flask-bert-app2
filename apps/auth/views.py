@@ -3,6 +3,9 @@ from apps.auth.forms import SingUpForm, LoginForm
 from apps.crud.models import User
 from flask import Blueprint, render_template, flash,  url_for, redirect, request
 from flask_login import login_user, logout_user
+import string
+import random
+import os
 
 auth = Blueprint(
     'auth',
@@ -19,11 +22,21 @@ def index():
 def signup():
     form = SingUpForm()
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            password=form.password.data
-        )
+        username=form.username.data
+        email=form.email.data
+        password=form.password.data
+        is_admin=False
+        user_path = generate_random_string()
+        while True:
+            if not User.query.filter_by(user_path=user_path).first():
+                break
+            user_path = generate_random_string()
+        print(user_path)
+        admin_email = os.environ.get('ADMIN_EMAIL')
+        admin_password = os.environ.get('ADMIN_PASS')
+        if email==admin_email and password==admin_password:
+            is_admin=True
+        user = User(username=username, email=email, password=password, user_path=user_path, is_admin=is_admin)
 
         if user.is_duplicate_email():
             flash('指定のメールアドレスは登録済みです')
@@ -56,3 +69,8 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+def generate_random_string(length=15):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string

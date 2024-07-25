@@ -2,7 +2,7 @@
 {% block title %}{% endblock %}
 {% block content %}
 <h1>逆ネーター</h1>
-<a href="{{ url_for('bertapp.register')}}">お題作成</a>
-<a href="{{ url_for('bertapp.questions')}}">お題一覧</a>
+<a href="{{ url_for('bertapp.register') }}">お題作成</a>
+<a href="{{ url_for('bertapp.questions', user_path=current_user.user_path) }}">お題一覧</a>
 <a href="{{ url_for('bertapp.search') }}">お題検索</a>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'bertapp/base.html' %}
 {% block title %}{% endblock %}
 {% block content %}
-<table>
+<table class="table table-light table-striped">
     <tr>
         <td>お題</td>
         <td>質問の回答</td>
@@ -10,7 +10,7 @@
     </tr>
     {% for user_answer in user_answers %}
     <tr>
-        <td>{{ user_answer.theme }}</td>
+        <td><a href="{{ url_for('bertapp.edit_answer', answer_id=user_answer.id, user_path=current_user.user_path) }}">{{ user_answer.theme }}</a></td>
         <td>{{ user_answer.q_answers }}</td>
         <td>{{ user_answer.answer }}</td>
         <td>{{ user_answer.answer_id }}</td>

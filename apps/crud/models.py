@@ -9,8 +9,11 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String, index=True)
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
+    user_path = db.Column(db.String)
+    is_admin = db.Column(db.Boolean, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    
 
     @property
     def password(self):

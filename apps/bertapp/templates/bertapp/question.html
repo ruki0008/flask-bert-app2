@@ -2,11 +2,11 @@
 {% block title %}登録{% endblock %}
 {% block content %}
 <h1>{{ theme }}</h1>
-<ul id="outputList"></ul>
-<input type="text" id="messageInput" placeholder="Type a message...">
-<button onclick="sendMessage()">Send</button>
-<input type="text" id="answerInput" placeholder="Type a answer...">
-<button onclick="sendAnswer()">Send</button>
+<ul id="outputList" class="list-group mt-3 mb-3"></ul>
+<input type="text" id="messageInput" placeholder="質問を入力">
+<button onclick="sendMessage()">送信</button>
+<input type="text" id="answerInput" placeholder="答えを入力">
+<button onclick="sendAnswer()">送信</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -27,18 +27,22 @@
     socket.on('receive_message', function(data) {
         const liMessage = document.createElement('li');
         liMessage.innerText = `${data.message}`;
+        liMessage.className = 'list-group-item'
         document.getElementById('outputList').appendChild(liMessage);
         const liResponse= document.createElement('li');
         liResponse.innerText = `${data.response}`;
+        liResponse.className = 'list-group-item'
         document.getElementById('outputList').appendChild(liResponse);
     });
 
     socket.on('receive_result', function(data) {
         const liAnswer = document.createElement('li');
         liAnswer.innerText = `${data.answer}`;
+        liAnswer.className = 'list-group-item'
         document.getElementById('outputList').appendChild(liAnswer);
         const liAnswerRes = document.createElement('li');
         liAnswerRes.innerText = `${data.result}`;
+        liAnswerRes.className = 'list-group-item'
         document.getElementById('outputList').appendChild(liAnswerRes);
     });
 </script>

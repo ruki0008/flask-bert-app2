@@ -2,17 +2,21 @@
 {% block title %}ユーザー一覧{% endblock %}
 {% block content %}
 <h2>ユーザー一覧</h2>
-<table>
+<table class="table table-primary table-striped">
     <tr>
         <th>ユーザーID</th>
         <th>ユーザー名</th>
         <th>メールアドレス</th>
+        <th>ユーザーパス</th>
+        <th>管理者権限</th>
     </tr>
     {% for user in users %}
     <tr>
         <td><a href="{{ url_for('crud.edit_user', user_id=user.id) }}">{{ user.id }}</a></td>
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
+        <td>{{ user.user_path }}</td>
+        <td>{{ user.is_admin }}</td>
     </tr>
     {% endfor %}
 </table>
