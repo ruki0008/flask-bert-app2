@@ -2,7 +2,7 @@
 {% block title %}登録{% endblock %}
 {% block content %}
 <h1>{{ answer_edit.theme }}</h1>
-<h4 class="border mb-3">{{ answer_edit.q_answers }}</h4>
+<p class="border mb-3">{{ answer_edit.q_answers }}</p>
 <h4 class="border">{{ answer_edit.answer }}</h4>
 <form action="{{ url_for('bertapp.delete_answer', answer_id=answer_edit.id, user_path=current_user.user_path) }}"
         method="POST"
