@@ -17,7 +17,7 @@ import random
 import string
 from flask_socketio import emit
 from fuzzywuzzy import fuzz
-from ..app import gv_socketio
+from apps.app import gv_socketio
 
 bertapp = Blueprint('bertapp', __name__, template_folder='templates', static_folder='static')
 
